@@ -1,5 +1,9 @@
 // components/Gallery.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
+import OptimizedImage from "./OptimizedImage";
+
 import image1 from "../assets/Product_Picture_1.PNG";
 import image2 from "../assets/Product_Picture_2.PNG";
 import image3 from "../assets/Product_Picture_3.PNG";
@@ -10,6 +14,7 @@ import image7 from "../assets/Product_Picture_7.PNG";
 
 export default function Gallery() {
   const [currentImage, setCurrentImage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const phoneNumber = "(647) 563-5239";
 
   const images = [
@@ -63,6 +68,35 @@ export default function Gallery() {
       description: "Convenient at-location interior detailing",
     },
   ];
+
+  const scrollToContact = () => {
+    document.getElementById("contact").scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => nextImage(),
+    onSwipedRight: () => prevImage(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
+
+  // Preload images
+  useEffect(() => {
+    const imagePromises = images.map((image) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = image.src;
+        img.onload = resolve;
+      });
+    });
+
+    Promise.all(imagePromises).then(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
   const prevImage = () => {
     setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
@@ -70,114 +104,95 @@ export default function Gallery() {
   const nextImage = () => {
     setCurrentImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
-  const scrollToContact = () => {
-    document.getElementById("contact").scrollIntoView({
-      behavior: "smooth",
-    });
-  };
 
   return (
     <section className="py-16 bg-white" id="gallery">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">
-            COMPLETE INTERIOR AND EXTERIOR MOBILE CAR DETAILING TORONTO
-          </h2>
-          <p className="text-gray-600 max-w-3xl mx-auto">
-            Experience the pinnacle of automotive care in Toronto. Our mobile
-            clean service isn't just perfect for local business professionals.
-            At Auto Detailing Pro, our mobile cleaning and valeting service is
-            just as perfect for RV owners, motor boat owners, and a variety of
-            other vehicle owners in the greater Toronto area.
-          </p>
-          <p className="text-gray-600 mt-4 max-w-3xl mx-auto">
-            Whether you own a small family car or a fleet of commercial cars, we
-            can help. We offer the most competitive prices in the industry and
-            offer custom detailing and express cleaning services which are
-            suitable for all budgets and vehicle types.
-          </p>
-        </div>
-
-        {/* Call to Action Buttons */}
-        <div className="flex justify-center gap-4 mb-12">
-          <button
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-            onClick={(e) => {
-              e.preventDefault();
-              // Check if it's mobile device
-              if (/Android|iPhone/i.test(navigator.userAgent)) {
-                window.location.href = `tel:${phoneNumber}`;
-              } else {
-                // Show phone number in a modal or tooltip for desktop
-                // You can implement a modal state here
-                alert("Call us at: 416-999-9999"); // Replace with modal
-              }
-            }}
-          >
-            Call Now
-          </button>
-          <button
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-            onClick={scrollToContact}
-          >
-            Schedule Your Service
-          </button>
-        </div>
-
-        {/* Image Gallery */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((image, index) => (
             <div
               key={index}
               className="relative group aspect-[4/3] overflow-hidden bg-gray-100 rounded-lg"
             >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
-              />
-              {/* Optional Hover Overlay */}
+              {!isLoading && (
+                <OptimizedImage
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
+                />
+              )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 text-center">
+                  <h3 className="font-bold mb-2">{image.title}</h3>
+                  <p className="text-sm">{image.description}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Mobile Version - Carousel */}
-        <div className="md:hidden mt-8">
-          <div className="relative">
-            <img
-              src={images[currentImage].src}
-              alt={images[currentImage].alt}
-              className="w-full aspect-[4/3] object-cover rounded-lg"
-            />
-            <button
-              onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              ←
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              →
-            </button>
-          </div>
-          <div className="flex justify-center mt-4">
-            {images.map((_, index) => (
+        {/* Mobile Carousel */}
+        {!isLoading && (
+          <div className="md:hidden">
+            <div className="relative overflow-hidden rounded-lg" {...handlers}>
+              <div className="relative aspect-[4/3] transition-transform duration-300">
+                <OptimizedImage
+                  src={images[currentImage].src}
+                  alt={images[currentImage].alt}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-bold text-lg">
+                      {images[currentImage].title}
+                    </h3>
+                    <p className="text-sm opacity-90">
+                      {images[currentImage].description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Buttons */}
               <button
-                key={index}
-                onClick={() => setCurrentImage(index)}
-                className={`w-2 h-2 mx-1 rounded-full ${
-                  currentImage === index ? "bg-blue-600" : "bg-gray-300"
-                }`}
-              />
-            ))}
+                onClick={prevImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 transition-colors"
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Carousel Indicators */}
+            <div className="flex justify-center gap-2 mt-4">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImage(index)}
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    currentImage === index ? "bg-blue-600 w-4" : "bg-gray-300"
+                  }`}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="flex justify-center items-center min-h-[300px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        )}
       </div>
     </section>
   );
