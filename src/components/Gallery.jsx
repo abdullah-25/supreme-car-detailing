@@ -4,13 +4,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import OptimizedImage from "./OptimizedImage";
 
-import image1 from "../assets/Product_Picture_1.PNG";
-import image2 from "../assets/Product_Picture_2.PNG";
-import image3 from "../assets/Product_Picture_3.PNG";
-import image4 from "../assets/Product_Picture_4.PNG";
-import image5 from "../assets/Product_Picture_5.PNG";
-import image6 from "../assets/Product_Picture_6.PNG";
-import image7 from "../assets/Product_Picture_7.PNG";
+import image1 from "@/assets/Product_Picture_1.PNG";
+import image2 from "@/assets/Product_Picture_2.PNG";
+import image3 from "@/assets/Product_Picture_3.PNG";
+import image4 from "@/assets/Product_Picture_4.PNG";
+import image5 from "@/assets/Product_Picture_5.PNG";
+import image6 from "@/assets/Product_Picture_6.PNG";
+import image7 from "@/assets/Product_Picture_7.PNG";
 
 export default function Gallery() {
   const [currentImage, setCurrentImage] = useState(0);
@@ -177,9 +177,8 @@ export default function Gallery() {
                 <button
                   key={index}
                   onClick={() => setCurrentImage(index)}
-                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                    currentImage === index ? "bg-blue-600 w-4" : "bg-gray-300"
-                  }`}
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${currentImage === index ? "bg-blue-600 w-4" : "bg-gray-300"
+                    }`}
                   aria-label={`Go to image ${index + 1}`}
                 />
               ))}

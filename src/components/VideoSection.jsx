@@ -1,8 +1,5 @@
 // components/VideoSection.jsx
 import { useState } from "react";
-import video1 from "../../public/videos/video1.mov"; // Adjust path according to your project structure
-import video2 from "../../public/videos/video2.mov";
-import video3 from "../../public/videos/video3.mov";
 
 export default function VideoSection() {
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -10,20 +7,37 @@ export default function VideoSection() {
   const videos = [
     {
       title: "Reliable Mobile Services",
-      video: video1,
+      video: "/videos/video1.mov",
       thumbnail: "/thumbnails/thumb1.jpg",
     },
     {
       title: "Same Day Reliable Services",
-      video: video2,
+      video: "/videos/video2.mov",
       thumbnail: "/thumbnails/thumb2.jpg",
     },
     {
       title: "Mobile Detailing at Your Home or Office",
-      video: video3,
+      video: "/videos/video3.mov",
       thumbnail: "/thumbnails/thumb3.jpg",
     },
   ];
+
+  const VideoPlayer = ({ src, isPlaying, onEnded }) => (
+    <video
+      className={`w-full rounded-lg object-cover ${isPlaying ? 'aspect-video' : 'h-full'}`}
+      controls={isPlaying}
+      autoPlay={isPlaying}
+      onEnded={onEnded}
+      muted={!isPlaying}
+      playsInline
+      loop={!isPlaying}
+      preload="metadata"
+    >
+      <source src={src} type="video/quicktime" />
+      <source src={src} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  );
 
   return (
     <section className="py-16 px-4 bg-gray-50">
@@ -39,30 +53,18 @@ export default function VideoSection() {
           {videos.map((video, index) => (
             <div key={index} className="relative group">
               {playingVideo === index ? (
-                <video
-                  className="w-full rounded-lg object-cover aspect-video"
-                  controls
-                  autoPlay
+                <VideoPlayer
+                  src={video.video}
+                  isPlaying={true}
                   onEnded={() => setPlayingVideo(null)}
-                >
-                  <source src={video.video} type="video/quicktime" />
-                  <source src={video.video} type="video/mp4" />{" "}
-                  {/* Add fallback format */}
-                  Your browser does not support the video tag.
-                </video>
+                />
               ) : (
                 <>
                   <div className="aspect-video w-full rounded-lg bg-black overflow-hidden">
-                    <video
-                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"
-                      muted
-                      playsInline
-                      loop
-                      preload="metadata"
-                    >
-                      <source src={video.video} type="video/quicktime" />
-                      <source src={video.video} type="video/mp4" />
-                    </video>
+                    <VideoPlayer
+                      src={video.video}
+                      isPlaying={false}
+                    />
                   </div>
                   <div
                     className="absolute inset-0 flex items-center justify-center cursor-pointer"

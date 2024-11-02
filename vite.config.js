@@ -1,11 +1,11 @@
+// vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // Add this line to use relative paths
-
+  base: '/',
   build: {
     outDir: "dist",
     assetsDir: "assets",
@@ -14,18 +14,19 @@ export default defineConfig({
         manualChunks: {
           vendor: ["react", "react-dom"],
         },
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
   },
-
-  // Add this back
-  assetsInclude: ["**/*.PNG", "**/*.png"],
-
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
     },
   },
+  publicDir: 'public',
+  assetsInclude: ['**/*.PNG', '**/*.png', '**/*.mov', '**/*.svg'], // Single assetsInclude
 });
 // import { defineConfig } from "vite";
 // import react from "@vitejs/plugin-react";
