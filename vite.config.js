@@ -5,7 +5,7 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [react()],
   base: '/',
-  assetsInclude: ['**/*.png', '**/*.mov'],  // Simplified
+  assetsInclude: ['**/*.png', '**/*.mov','**/*.PNG'],  // Simplified
   build: {
     outDir: "dist",
     assetsDir: "assets",
