@@ -1,4 +1,3 @@
-// vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
@@ -6,17 +5,22 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  assetsInclude: ['**/*.PNG', '**/*.png', '**/*.mov'],  // Add this
   build: {
     outDir: "dist",
     assetsDir: "assets",
+    copyPublicDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
         },
-        assetFileNames: 'assets/[name][extname]',
-        chunkFileNames: 'assets/[name].js',
-        entryFileNames: 'assets/[name].js',
+        assetFileNames: (assetInfo) => {
+          if (/\.(png|jpe?g|gif|svg|PNG)$/.test(assetInfo.name)) {
+            return 'assets/images/[name][extname]';
+          }
+          return 'assets/[name][extname]';
+        },
       },
     },
   },
@@ -25,8 +29,6 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
-  publicDir: 'public',
-  assetsInclude: ['**/*.PNG', '**/*.png', '**/*.mov', '**/*.svg'], // Single assetsInclude
 });
 // import { defineConfig } from "vite";
 // import react from "@vitejs/plugin-react";
