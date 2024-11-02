@@ -1,4 +1,6 @@
 import heroimg from "../assets/Product_Image_Hero.PNG";
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ChevronRight, Star, Shield, MapPin, Menu } from 'lucide-react'
 
 // components/Hero.jsx
 export default function Hero() {
@@ -30,7 +32,7 @@ export default function Hero() {
           Supreme Auto Detailing
         </h1>
         <p className="text-xl md:text-2xl text-white mb-8 max-w-2xl">
-          Auto detailing services at your home or office in Toronto & GTA
+          Experience luxury car care at your doorstep. Our mobile detailing service brings professional-grade results directly to you.
         </p>
         <div className="flex gap-4">
           <button
@@ -46,6 +48,24 @@ export default function Hero() {
             Learn More
           </button>
         </div>
+        {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-24">
+          {[
+            { icon: Shield, text: "Fully Insured" },
+            { icon: Star, text: "5-Star Service" },
+            { icon: MapPin, text: "Mobile Detailing" }
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 * (index + 1) }}
+              className="flex items-center gap-3 text-white/80"
+            >
+              <item.icon className="h-6 w-6 text-blue-500" />
+              <span className="text-lg">{item.text}</span>
+            </motion.div>
+          ))}
+        </div> */}
       </div>
     </section>
   );

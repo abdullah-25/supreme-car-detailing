@@ -64,15 +64,15 @@ export default function App() {
           </script>
         </Helmet>
 
-        {/* Your existing components */}
+
         <Navbar />
         <Hero />
         <Services />
         <Gallery />
         <VideoSection />
-        <Pricing />
         <ServiceAreas />
         <Testimonial />
+        <Pricing />
         <ContactForm />
         <Footer />
       </div>

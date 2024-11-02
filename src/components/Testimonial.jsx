@@ -22,77 +22,53 @@ const Testimonial = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rating, setRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
-  const [debugLogs, setDebugLogs] = useState([]);
-
-  const addDebugLog = (message) => {
-    console.log(message);
-    setDebugLogs((prev) => [
-      ...prev,
-      `${new Date().toISOString()}: ${message}`,
-    ]);
-  };
 
   useEffect(() => {
-    addDebugLog("Component mounted");
+    console.log('Component mounted, environment:', process.env.NODE_ENV);
+    if (!import.meta.env.PLACE_ID) {
+      console.warn('Missing PLACE_ID environment variable');
+    }
     fetchReviews();
   }, []);
 
+  useEffect(() => {
+    console.log('State updated:', {
+      loading,
+      error,
+      reviewsCount: reviews.length,
+      currentRating: rating,
+      totalReviews
+    });
+  }, [loading, error, reviews, rating, totalReviews]);
+
   const fetchReviews = async () => {
-    addDebugLog("Starting fetchReviews function");
+    console.log('Fetching reviews...');
     try {
-      const functionUrl = "/api/reviews";
-      addDebugLog(`Attempting to fetch from: ${functionUrl}`);
-
-      const response = await fetch(functionUrl).catch((error) => {
-        addDebugLog(`Fetch failed: ${error.message}`);
-        throw error;
-      });
-
-      addDebugLog(`Response received - Status: ${response.status}`);
-
-      const contentType = response.headers.get("content-type");
-      addDebugLog(`Content-Type: ${contentType}`);
+      const response = await fetch('http://localhost:3001/api/reviews');
+      console.log('Response status:', response.status);
+      console.log('Content type:', response.headers.get('content-type'));
 
       if (!response.ok) {
         const errorText = await response.text();
-        addDebugLog(`Error response: ${errorText}`);
-        throw new Error(
-          `HTTP error! status: ${response.status}, text: ${errorText}`
-        );
+        throw new Error(`HTTP error! status: ${response.status}, text: ${errorText}`);
       }
 
-      let responseText;
-      try {
-        responseText = await response.text();
-        addDebugLog(`Raw response: ${responseText}`);
-        const data = JSON.parse(responseText);
+      // Parse JSON only once
+      const data = await response.json();
+      console.log('Parsed data:', data);
 
-        if (data.error) {
-          throw new Error(data.error);
-        }
+      setReviews(data.reviews || []);
+      setRating(data.rating || 0);
+      setTotalReviews(data.total_reviews || 0);
 
-        addDebugLog(
-          `Parsed data successfully: ${JSON.stringify(data, null, 2)}`
-        );
-
-        setReviews(data.reviews || []);
-        setRating(data.rating || 0);
-        setTotalReviews(data.total_reviews || 0);
-      } catch (parseError) {
-        addDebugLog(`JSON Parse error: ${parseError.message}`);
-        addDebugLog(`Failed to parse: ${responseText}`);
-        throw new Error(`Invalid JSON response: ${parseError.message}`);
-      }
     } catch (err) {
-      addDebugLog(`Error in fetchReviews: ${err.message}`);
-      addDebugLog(`Stack trace: ${err.stack}`);
+      console.error('Error in fetchReviews:', err);
       setError(err.message);
       setReviews(MOCK_REVIEWS);
     } finally {
       setLoading(false);
     }
   };
-
   const getPageReviews = () => {
     const start = currentPage * REVIEWS_PER_PAGE;
     return reviews.slice(start, start + REVIEWS_PER_PAGE);
@@ -103,18 +79,6 @@ const Testimonial = () => {
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
   };
-
-  // Debug panel - only shown in development
-  const DebugPanel = () => (
-    <div className="fixed bottom-4 right-4 max-w-md max-h-96 overflow-auto bg-gray-800 text-white p-4 rounded-lg opacity-75 hover:opacity-100">
-      <h3 className="font-bold mb-2">Debug Logs</h3>
-      {debugLogs.map((log, i) => (
-        <div key={i} className="text-xs mb-1">
-          {log}
-        </div>
-      ))}
-    </div>
-  );
 
   if (loading) {
     return (
@@ -128,7 +92,6 @@ const Testimonial = () => {
             ))}
           </div>
         </div>
-        {process.env.NODE_ENV === "development" && <DebugPanel />}
       </div>
     );
   }
@@ -140,10 +103,9 @@ const Testimonial = () => {
           className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
           role="alert"
         >
-          <strong className="font-bold">Error: </strong>
+          <strong className="font-bold">Error loading reviews: </strong>
           <span className="block sm:inline">{error}</span>
         </div>
-        {process.env.NODE_ENV === "development" && <DebugPanel />}
       </div>
     );
   }
@@ -158,7 +120,7 @@ const Testimonial = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center">
             <img
-              src="/api/placeholder/272/92"
+              src="https://services.google.com/fh/files/misc/google_g_icon_download.png"
               alt="Google"
               className="h-6 object-contain"
             />
@@ -170,11 +132,10 @@ const Testimonial = () => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-5 h-5 ${
-                    i < Math.round(rating)
-                      ? "text-yellow-400 fill-current"
-                      : "text-gray-300"
-                  }`}
+                  className={`w-5 h-5 ${i < Math.round(rating)
+                    ? "text-yellow-400 fill-current"
+                    : "text-gray-300"
+                    }`}
                 />
               ))}
             </div>
@@ -182,9 +143,7 @@ const Testimonial = () => {
           </div>
         </div>
         <a
-          href={`https://search.google.com/local/writereview?placeid=${
-            import.meta.env.VITE_PLACE_ID
-          }`}
+          href={`https://search.google.com/local/writereview?placeid=${import.meta.env.PLACE_ID || ''}`}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
@@ -222,12 +181,14 @@ const Testimonial = () => {
                 ))}
               </div>
               <p className="text-gray-700 line-clamp-2">{review.text}</p>
-              <button
-                onClick={() => window.open(review.author_url, "_blank")}
-                className="text-gray-500 mt-2 text-sm hover:text-blue-500"
-              >
-                Read more
-              </button>
+              {review.author_url && (
+                <button
+                  onClick={() => window.open(review.author_url, "_blank")}
+                  className="text-gray-500 mt-2 text-sm hover:text-blue-500"
+                >
+                  Read more
+                </button>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -247,15 +208,12 @@ const Testimonial = () => {
           {[...Array(totalPages)].map((_, index) => (
             <div
               key={index}
-              className={`w-2 h-2 rounded-full ${
-                index === currentPage ? "bg-blue-500" : "bg-gray-300"
-              }`}
+              className={`w-2 h-2 rounded-full ${index === currentPage ? "bg-blue-500" : "bg-gray-300"
+                }`}
             />
           ))}
         </div>
       )}
-
-      {process.env.NODE_ENV === "development" && <DebugPanel />}
     </div>
   );
 };

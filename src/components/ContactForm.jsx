@@ -2,6 +2,7 @@
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
 
+
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
@@ -27,12 +28,12 @@ export default function ContactForm() {
         },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
-
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", message: "" });
       setTimeout(() => setStatus(""), 3000);
     } catch (error) {
       console.error("Failed to send email:", error);
+
       setStatus("error");
       setTimeout(() => setStatus(""), 3000);
     }
@@ -110,11 +111,10 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className={`w-full py-3 px-4 rounded-lg text-white font-medium ${
-              status === "sending"
-                ? "bg-gray-400"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`w-full py-3 px-4 rounded-lg text-white font-medium ${status === "sending"
+              ? "bg-gray-400"
+              : "bg-blue-600 hover:bg-blue-700"
+              }`}
           >
             {status === "sending" ? "Sending..." : "Send Message"}
           </button>

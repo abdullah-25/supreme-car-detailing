@@ -11,6 +11,7 @@ import image4 from "@/assets/Product_Picture_4.PNG";
 import image5 from "@/assets/Product_Picture_5.PNG";
 import image6 from "@/assets/Product_Picture_6.PNG";
 import image7 from "@/assets/Product_Picture_7.PNG";
+import image8 from "@/assets/Product_Picture_8.PNG";
 
 export default function Gallery() {
   const [currentImage, setCurrentImage] = useState(0);
@@ -24,7 +25,8 @@ export default function Gallery() {
       image4,
       image5,
       image6,
-      image7
+      image7,
+      image8
     });
   }, []);
 
@@ -77,6 +79,13 @@ export default function Gallery() {
       category: "interior",
       title: "Mobile Interior Service",
       description: "Convenient at-location interior detailing",
+    },
+    {
+      src: image8,
+      alt: "Mobile auto detailing Toronto - Professional car cleaning service",
+      category: "interior",
+      title: "Mobile Interior Service",
+      description: "Luxury vehicle interior detailing",
     },
   ];
 
