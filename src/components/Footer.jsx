@@ -18,7 +18,7 @@ export default function Footer() {
                 <br />
                 Phone: (647) 563-5239
                 <br />
-                Email: supremeautodetailing9@gmail.com
+                Email: supremeautodetailing09@gmail.com
               </address>
             </div>
           </div>
