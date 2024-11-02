@@ -22,7 +22,6 @@ export default defineConfig({
         },
       },
     }),
-
     viteImagemin({
       gifsicle: {
         optimizationLevel: 7,
@@ -58,30 +57,39 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "assets",
-
+    sourcemap: true, // Add this for better debugging
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
-          // Split other large dependencies
         },
-      },
-      chunkSizeWarningLimit: 500,
-      minify: "terser",
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
+        format: "es", // Add this to ensure proper module format
+        // Remove minify and terserOptions from here
       },
     },
   },
-  assetsInclude: ["**/*.PNG", "**/*.png", "**/*.mov"], // Add this line
+
+  optimizeDeps: {
+    include: ["react", "react-dom"], // Add this for better dependency handling
+  },
+
+  assetsInclude: [
+    "**/*.PNG",
+    "**/*.png",
+    "**/*.mov",
+    "**/*.jpg",
+    "**/*.jpeg",
+    "**/*.gif",
+    "**/*.svg",
+  ],
+
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
     },
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"], // Add this for better file resolution
   },
+
   server: {
     proxy: {
       "/api": {
@@ -107,7 +115,9 @@ export default defineConfig({
       },
     },
   },
+
+  // Change this to properly handle environment variables
   define: {
-    "process.env": {},
+    "process.env": process.env,
   },
 });
