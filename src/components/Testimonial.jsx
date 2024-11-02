@@ -44,7 +44,7 @@ const Testimonial = () => {
   const fetchReviews = async () => {
     console.log('Fetching reviews...');
     try {
-      const response = await fetch('http://localhost:3001/api/reviews');
+      const response = await fetch('/.netlify/functions/reviews');
       console.log('Response status:', response.status);
       console.log('Content type:', response.headers.get('content-type'));
 

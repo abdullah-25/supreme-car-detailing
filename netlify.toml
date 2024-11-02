@@ -1,38 +1,11 @@
 [build]
   command = "npm run build"
-  functions = "netlify/functions"
   publish = "dist"
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Type = "text/html"
-
-[[headers]]
-  for = "/assets/*.js"
-  [headers.values]
-    Content-Type = "application/javascript"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/assets/*.css"
-  [headers.values]
-    Content-Type = "text/css"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/videos/*"
-  [headers.values]
-    Content-Type = "video/quicktime"
-    Cache-Control = "public, max-age=31536000, immutable"
+[functions]
+  directory = "netlify/functions"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
