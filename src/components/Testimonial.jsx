@@ -40,7 +40,7 @@ const Testimonial = () => {
   const fetchReviews = async () => {
     addDebugLog("Starting fetchReviews function");
     try {
-      const functionUrl = "/.netlify/functions/reviews";
+      const functionUrl = "/api/reviews";
       addDebugLog(`Attempting to fetch from: ${functionUrl}`);
 
       const response = await fetch(functionUrl).catch((error) => {
