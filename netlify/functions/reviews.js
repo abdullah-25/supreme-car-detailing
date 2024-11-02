@@ -1,4 +1,3 @@
-const axios = require('axios').defaults;
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -11,16 +10,10 @@ export const handler = async (event, context) => {
       throw new Error("Required environment variables are missing");
     }
 
-    const response = await axios.get(
-      "https://maps.googleapis.com/maps/api/place/details/json",
-      {
-        params: {
-          place_id: PLACE_ID,
-          fields: "reviews,rating,user_ratings_total",
-          key: GOOGLE_API_KEY,
-        },
-      }
-    );
+    const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${PLACE_ID}&fields=reviews,rating,user_ratings_total&key=${GOOGLE_API_KEY}`
+      );
+      
 
     if (!response.data || !response.data.result) {
       throw new Error("Invalid response from Google Places API");
