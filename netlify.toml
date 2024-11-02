@@ -4,27 +4,20 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 [[headers]]
   for = "/*.js"
   [headers.values]
     Content-Type = "text/javascript"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Content-Type = "text/css"
-    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/assets/*"
