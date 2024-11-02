@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, ChevronRight } from "lucide-react";
 
 const REVIEWS_PER_PAGE = 4;
-const PLACE_ID = import.meta.env.VITE_PLACE_ID;
+
 // Mock data for fallback
 const MOCK_REVIEWS = [
   {
@@ -22,40 +22,72 @@ const Testimonial = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rating, setRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
+  const [debugLogs, setDebugLogs] = useState([]);
+
+  const addDebugLog = (message) => {
+    console.log(message);
+    setDebugLogs((prev) => [
+      ...prev,
+      `${new Date().toISOString()}: ${message}`,
+    ]);
+  };
 
   useEffect(() => {
+    addDebugLog("Component mounted");
     fetchReviews();
   }, []);
 
   const fetchReviews = async () => {
+    addDebugLog("Starting fetchReviews function");
     try {
-      setLoading(true);
+      const functionUrl = "/.netlify/functions/reviews";
+      addDebugLog(`Attempting to fetch from: ${functionUrl}`);
 
-      const response = await fetch("/.netlify/functions/reviews");
+      const response = await fetch(functionUrl).catch((error) => {
+        addDebugLog(`Fetch failed: ${error.message}`);
+        throw error;
+      });
+
+      addDebugLog(`Response received - Status: ${response.status}`);
+
+      const contentType = response.headers.get("content-type");
+      addDebugLog(`Content-Type: ${contentType}`);
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        const text = await response.text();
-        console.error("Invalid content type:", contentType, "Response:", text);
-        throw new Error("Response is not JSON");
-      }
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
+        addDebugLog(`Error response: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, text: ${errorText}`
+        );
       }
 
-      setReviews(data.reviews);
-      setRating(data.rating);
-      setTotalReviews(data.total_reviews);
+      let responseText;
+      try {
+        responseText = await response.text();
+        addDebugLog(`Raw response: ${responseText}`);
+        const data = JSON.parse(responseText);
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        addDebugLog(
+          `Parsed data successfully: ${JSON.stringify(data, null, 2)}`
+        );
+
+        setReviews(data.reviews || []);
+        setRating(data.rating || 0);
+        setTotalReviews(data.total_reviews || 0);
+      } catch (parseError) {
+        addDebugLog(`JSON Parse error: ${parseError.message}`);
+        addDebugLog(`Failed to parse: ${responseText}`);
+        throw new Error(`Invalid JSON response: ${parseError.message}`);
+      }
     } catch (err) {
+      addDebugLog(`Error in fetchReviews: ${err.message}`);
+      addDebugLog(`Stack trace: ${err.stack}`);
       setError(err.message);
       setReviews(MOCK_REVIEWS);
-      console.error("Error fetching reviews:", err);
     } finally {
       setLoading(false);
     }
@@ -72,6 +104,18 @@ const Testimonial = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
   };
 
+  // Debug panel - only shown in development
+  const DebugPanel = () => (
+    <div className="fixed bottom-4 right-4 max-w-md max-h-96 overflow-auto bg-gray-800 text-white p-4 rounded-lg opacity-75 hover:opacity-100">
+      <h3 className="font-bold mb-2">Debug Logs</h3>
+      {debugLogs.map((log, i) => (
+        <div key={i} className="text-xs mb-1">
+          {log}
+        </div>
+      ))}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="w-full max-w-6xl mx-auto px-4 py-8 text-center">
@@ -84,6 +128,7 @@ const Testimonial = () => {
             ))}
           </div>
         </div>
+        {process.env.NODE_ENV === "development" && <DebugPanel />}
       </div>
     );
   }
@@ -98,6 +143,7 @@ const Testimonial = () => {
           <strong className="font-bold">Error: </strong>
           <span className="block sm:inline">{error}</span>
         </div>
+        {process.env.NODE_ENV === "development" && <DebugPanel />}
       </div>
     );
   }
@@ -112,7 +158,7 @@ const Testimonial = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center">
             <img
-              src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+              src="/api/placeholder/272/92"
               alt="Google"
               className="h-6 object-contain"
             />
@@ -136,7 +182,9 @@ const Testimonial = () => {
           </div>
         </div>
         <a
-          href={`https://search.google.com/local/writereview?placeid=${PLACE_ID}`}
+          href={`https://search.google.com/local/writereview?placeid=${
+            import.meta.env.VITE_PLACE_ID
+          }`}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
@@ -206,114 +254,10 @@ const Testimonial = () => {
           ))}
         </div>
       )}
+
+      {process.env.NODE_ENV === "development" && <DebugPanel />}
     </div>
   );
 };
 
 export default Testimonial;
-
-// import { useState } from "react";
-// import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-
-// export default function Testimonials() {
-//   const [currentSlide, setCurrentSlide] = useState(0);
-
-//   const testimonials = [
-//     {
-//       name: "Nabil Khan",
-//       rating: 5,
-//       text: "I wasn't expecting to be so impressed, but wow! My car looks even better than when I first bought it. Every inch is spotless, and the team worked hard to ensure everything was perfect. Definitely the best detailing service I've ever used!",
-//     },
-//     {
-//       name: "Mimo Oh",
-
-//       rating: 5,
-//       text: "The team did a fantastic job cleaning the inside and outside of my cars. Very nice people, they made sure I was satisfied with the outcome prior to even mentioning payment.",
-//     },
-//     {
-//       name: "Luba Liebgott",
-
-//       rating: 5,
-//       text: "They did a fantastic job! My car was a complete disaster i have 2 kids and unfortunately if that wasn't dirty enough  a mouse got in my car and ripped stuff to shreds making confetti everywhere and eating all the fallen food and leaving droppings it was really bad . they came set up shop and scrubbed it all down to practically new looking. I would highly recommend their service.",
-//     },
-//   ];
-
-//   return (
-//     <section className="py-16 px-4 bg-gray-50">
-//       <div className="max-w-3xl mx-auto">
-//         {" "}
-//         {/* Reduced max width */}
-//         <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-//           Our Customer Feedback
-//         </h2>
-//         <p className="text-center text-gray-600 mb-8">
-//           Don't take our word for it. Trust our customers
-//         </p>
-//         <div className="relative px-4 md:px-0">
-//           {" "}
-//           {/* Added padding control */}
-//           {/* Testimonial Card */}
-//           <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mx-auto max-w-2xl">
-//             <div className="space-y-4">
-//               {/* Customer Name */}
-//               <h3 className="text-xl font-bold text-gray-900">
-//                 {testimonials[currentSlide].name}
-//               </h3>
-
-//               {/* Star Rating */}
-//               <div className="flex gap-1">
-//                 {[...Array(5)].map((_, i) => (
-//                   <Star
-//                     key={i}
-//                     className="w-5 h-5 text-yellow-400 fill-current"
-//                   />
-//                 ))}
-//               </div>
-
-//               {/* Testimonial Text */}
-//               <p className="text-gray-600 text-lg leading-relaxed">
-//                 {testimonials[currentSlide].text}
-//               </p>
-//             </div>
-//           </div>
-//           {/* Navigation Buttons */}
-//           <button
-//             onClick={() =>
-//               setCurrentSlide((prev) =>
-//                 prev === 0 ? testimonials.length - 1 : prev - 1
-//               )
-//             }
-//             className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-//             aria-label="Previous testimonial"
-//           >
-//             <ChevronLeft className="w-6 h-6 text-gray-600" />
-//           </button>
-//           <button
-//             onClick={() =>
-//               setCurrentSlide((prev) => (prev + 1) % testimonials.length)
-//             }
-//             className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-//             aria-label="Next testimonial"
-//           >
-//             <ChevronRight className="w-6 h-6 text-gray-600" />
-//           </button>
-//           {/* Dots Navigation */}
-//           <div className="flex justify-center gap-2 mt-6">
-//             {testimonials.map((_, index) => (
-//               <button
-//                 key={index}
-//                 onClick={() => setCurrentSlide(index)}
-//                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-//                   currentSlide === index ? "w-4 bg-blue-600" : "bg-gray-300"
-//                 }`}
-//                 aria-label={`Go to testimonial ${index + 1}`}
-//               />
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-// // components/Testimonials.jsx
