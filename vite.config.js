@@ -4,6 +4,7 @@ import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: './', // Add this line to use relative paths
 
   build: {
     outDir: "dist",
