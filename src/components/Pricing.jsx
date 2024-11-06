@@ -51,7 +51,7 @@ export default function Pricing() {
     ],
     exterior: [
       {
-        name: "Exterior Basic",
+        name: "Exterior Package",
         description: "Ideal for vehicles needing a light maintenance detail",
         features: [
           "Hand wash and dry",
@@ -62,9 +62,9 @@ export default function Pricing() {
           "Ceramic spray application for protection (2 months protection)",
         ],
         prices: {
-          sedan: 39,
-          suv: 49,
-          van: 49,
+          "Sedan / Coupe": 50,
+          "SUV / Truck": 60,
+          "Mini van / 7 seater SUV": 60,
         },
         note: "This package does not include shampooing, steam cleaning, or conditioning.",
       },
@@ -133,8 +133,8 @@ export default function Pricing() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-6 py-2 rounded-full ${activeTab === tab.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
             >
               {tab.label}
