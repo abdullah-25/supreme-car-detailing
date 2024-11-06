@@ -36,7 +36,7 @@ export default function App() {
                 "@type": "AutoDetailing",
                 "name": "Supreme Auto Detailing",
                 "description": "Professional mobile car detailing services in Toronto and GTA",
-                "url": "https://yourwebsite.com",
+                "url": "https://supremeautodetailing.ca/",
                 "areaServed": [
                   "Toronto",
                   "North York",
@@ -50,7 +50,13 @@ export default function App() {
                   "Pickering",
                   "Whitby",
                   "Caledon",
-                  "Port Credit"
+                  "Port Credit",
+                  "New Market",
+                  "Aurora",
+                  "Bradford",
+                  "Innisfil",
+                  "Stouffville",
+                  "King City"
                 ],
                 "service": [
                   "Mobile Car Detailing",
