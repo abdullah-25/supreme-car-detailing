@@ -39,7 +39,7 @@ export default function VideoSection() {
           We offer what others don't
         </p>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="">
           {videos.map((video, index) => (
             <div key={index} className="relative group">
               {playingVideo === index ? (
