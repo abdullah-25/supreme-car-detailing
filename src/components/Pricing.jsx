@@ -68,21 +68,6 @@ export default function Pricing() {
         },
         note: "This package does not include shampooing, steam cleaning, or conditioning.",
       },
-      // {
-      //   name: "Clay & Seal",
-      //   description: "Ideal for vehicles needing a deep clean detail",
-      //   features: [
-      //     "Includes all services from Basic Exterior Package",
-      //     "Iron decontamination to eliminate orange spots",
-      //     "Clay bar treatment to remove contaminants",
-      //     "Ceramic sealant application (8-12 months protection)",
-      //   ],
-      //   prices: {
-      //     sedan: 99,
-      //     suv: 129,
-      //     van: 139,
-      //   },
-      // },
     ],
     combo: [
       {
@@ -148,8 +133,8 @@ export default function Pricing() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-6 py-2 rounded-full ${activeTab === tab.id
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
             >
               {tab.label}
@@ -157,7 +142,6 @@ export default function Pricing() {
           ))}
         </div>
 
-        {/* Pricing Cards */}
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-2 gap-8">
           {pricing[activeTab]?.map((pkg, index) => (
@@ -167,9 +151,7 @@ export default function Pricing() {
                 }`}
             >
               <h3
-                className={`text-2xl font-bold mb-2 ${pkg.name.includes("Supreme")
-                  ? "text-orange-600"
-                  : "text-gray-900"
+                className={`text-2xl font-bold mb-2 ${pkg.name.includes("Supreme") ? "text-orange-600" : "text-gray-900"
                   }`}
               >
                 {pkg.name}
@@ -185,14 +167,14 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              {/* Conditional rendering for prices */}
+              {/* Updated prices rendering */}
               {pkg.prices && (
                 <div className="space-y-2">
-                  <p className="font-bold">Sedan / Coupe ${pkg.prices.sedan}</p>
-                  <p className="font-bold">SUV / Truck ${pkg.prices.suv}</p>
-                  <p className="font-bold">
-                    Mini Van / 7 seater SUV ${pkg.prices.van}
-                  </p>
+                  {Object.entries(pkg.prices).map(([type, price]) => (
+                    <p key={type} className="font-bold capitalize">
+                      {type} ${price}
+                    </p>
+                  ))}
                 </div>
               )}
 
