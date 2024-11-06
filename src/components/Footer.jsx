@@ -16,7 +16,7 @@ export default function Footer() {
               <address className="not-italic">
                 589 Steven Ct #2, Newmarket, ON L3Y 6Z3
                 <br />
-                Phone: (647) 563-5239
+                Phone: (647) 892-1239
                 <br />
                 Email: supremeautodetailing09@gmail.com
               </address>

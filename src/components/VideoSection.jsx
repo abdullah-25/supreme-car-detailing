@@ -18,13 +18,13 @@ export default function VideoSection() {
       controls={isPlaying}
       autoPlay={isPlaying}
       onEnded={onEnded}
-      muted={!isPlaying}
+      muted={isPlaying} // Changed this to match isPlaying
       playsInline
       loop={!isPlaying}
       preload="metadata"
     >
-      <source src={src} type="video/quicktime" />
       <source src={src} type="video/mp4" />
+      <source src={src} type="video/quicktime" />
       Your browser does not support the video tag.
     </video>
   );
