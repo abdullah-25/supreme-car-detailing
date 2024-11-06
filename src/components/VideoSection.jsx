@@ -7,18 +7,8 @@ export default function VideoSection() {
   const videos = [
     {
       title: "Reliable Mobile Services",
-      video: "/videos/video1.mov",
-      thumbnail: "/thumbnails/thumb1.jpg",
-    },
-    {
-      title: "Same Day Reliable Services",
-      video: "/videos/video2.mov",
-      thumbnail: "/thumbnails/thumb2.jpg",
-    },
-    {
-      title: "Mobile Detailing at Your Home or Office",
-      video: "/videos/video3.mov",
-      thumbnail: "/thumbnails/thumb3.jpg",
+      video: "/videos/video1.mp4",
+      thumbnail: "/videos/thumb.png",
     },
   ];
 

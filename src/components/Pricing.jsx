@@ -125,6 +125,8 @@ export default function Pricing() {
           "Window Ceramic Coating - $100",
           "Headliner Shampoo (Roof) - $40",
           "Ceramic Floor mats - $50",
+          "Window Tinting - contact us for quote",
+          "Paint Correction - contact us for quote"
         ],
         note: "Any vehicles that require pet hair removal will incur an additional surcharge starting at $30+ For vehicles with excessive dirt accumulation, the surcharge begins at $50+",
       },
@@ -140,11 +142,10 @@ export default function Pricing() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-2 rounded-full ${
-                activeTab === tab.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-6 py-2 rounded-full ${activeTab === tab.id
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
             >
               {tab.label}
             </button>
@@ -157,16 +158,14 @@ export default function Pricing() {
           {pricing[activeTab]?.map((pkg, index) => (
             <div
               key={index}
-              className={`p-6 rounded-lg ${
-                pkg.name.includes("Supreme") ? "bg-orange-50" : "bg-gray-50"
-              }`}
+              className={`p-6 rounded-lg ${pkg.name.includes("Supreme") ? "bg-orange-50" : "bg-gray-50"
+                }`}
             >
               <h3
-                className={`text-2xl font-bold mb-2 ${
-                  pkg.name.includes("Supreme")
-                    ? "text-orange-600"
-                    : "text-gray-900"
-                }`}
+                className={`text-2xl font-bold mb-2 ${pkg.name.includes("Supreme")
+                  ? "text-orange-600"
+                  : "text-gray-900"
+                  }`}
               >
                 {pkg.name}
               </h3>
